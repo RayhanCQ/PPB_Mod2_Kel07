@@ -4,3 +4,14 @@ data class AnimeListResponse(
     val data: List<Anime>
 )
 
+data class CharacterListResponse(
+    val data: List<Character>
+)
+
+data class Character(
+    val mal_id: Int,
+    val name: String,
+    val about: String?,
+    val images: Images?
+)
+
