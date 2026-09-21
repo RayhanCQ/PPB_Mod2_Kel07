@@ -46,8 +46,32 @@ fun AboutScreen() {
                 )
 
                 Text(
-                    text = "Dibuat oleh Kelompok 07",
+                    text = "Dibuat oleh Kelompok 07, Shift 01",
                     textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = "Anggota Kelompok:"
+                )
+
+                Text(
+                    text = "Galileo Athari M. 21120124130099",
+                    textAlign = TextAlign.Left
+                )
+
+                Text(
+                    text = "Rayhan Cahya Qurnia 21120124130046",
+                    textAlign = TextAlign.Left
+                )
+
+                Text(
+                    text = "Cristian Duta D.S. 21120124140136",
+                    textAlign = TextAlign.Left
+                )
+
+                Text(
+                    text = "Alif Rizki K. Hariadi 21120124140148",
+                    textAlign = TextAlign.Left
                 )
             }
         }
