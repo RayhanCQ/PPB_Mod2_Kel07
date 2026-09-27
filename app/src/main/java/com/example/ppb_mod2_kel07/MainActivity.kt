@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Movie
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -15,8 +17,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -41,9 +45,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AnimeApp() {
     val navController = rememberNavController()
+    val viewModel: AnimeViewModel = viewModel()
 
     val screens = listOf(
         Screen.Anime,
+        Screen.Character,
+        Screen.Favorite,
         Screen.About
     )
 
@@ -74,7 +81,10 @@ fun AnimeApp() {
                             Icon(
                                 imageVector = when (screen) {
                                     Screen.Anime -> Icons.Default.Movie
+                                    Screen.Character -> Icons.Default.People
+                                    Screen.Favorite -> Icons.Default.Star
                                     Screen.About -> Icons.Default.Info
+                                    Screen.Detail -> Icons.Default.Movie
                                 },
                                 contentDescription = screen.title
                             )
@@ -93,11 +103,27 @@ fun AnimeApp() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Anime.route) {
-                AnimeListScreen()
+                AnimeListScreen(viewModel) { anime -> navController.navigate(Screen.Detail.route(anime.mal_id)) }
+            }
+
+            composable(Screen.Character.route) {
+                CharacterListScreen(viewModel)
+            }
+
+            composable(Screen.Favorite.route) {
+                FavoriteScreen(viewModel) { anime -> navController.navigate(Screen.Detail.route(anime.mal_id)) }
             }
 
             composable(Screen.About.route) {
                 AboutScreen()
+            }
+
+            composable(Screen.Detail.route) { backStackEntry ->
+                val animeId = backStackEntry.arguments?.getString("animeId")?.toIntOrNull()
+                val anime by viewModel.animeList.collectAsState()
+                val favorites by viewModel.favoriteIds.collectAsState()
+                val selectedAnime = anime.firstOrNull { it.mal_id == animeId }
+                AnimeDetailScreen(selectedAnime, animeId in favorites) { animeId?.let(viewModel::toggleFavorite) }
             }
         }
     }
